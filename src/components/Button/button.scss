@@ -1,0 +1,27 @@
+.balatro-button {
+    box-shadow: 0px 4px 3px 0px #000000;
+    &:active {
+        margin-top: 2px;
+        box-shadow: none;
+    }
+
+    &:hover {
+        filter: brightness(85%);
+    }
+
+    &.bg-bal-blue {
+        background-color: #0590f9;
+    }
+    &.bg-bal-red {
+        background-color: #f6483d;
+    }
+    &.bg-bal-green {
+        background-color: #309d74;
+    }
+    &.bg-bal-yellow {
+        background-color: #fb9107;
+    }
+    &.bg-bal-grey {
+        background-color: #6d8084;
+    }
+}

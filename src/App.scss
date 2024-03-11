@@ -4,11 +4,35 @@
 
 @font-face {
     font-family: 'Balatro';
-    src: url('/src/assets/fonts/balatro.otf') format('opentype');
+    src: url('/src/assets/fonts/balatro.ttf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
 
 body {
     font-family: 'Balatro', Courier, monospace;
+    background-image: url('/src//assets/images/backgound.jpg');
+    color: white;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    &::before {
+        content: ' ';
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(
+            rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.2) 50%
+        );
+        z-index: 2;
+        background-size:
+            100% 7px,
+            3px 100%;
+        pointer-events: none;
+    }
 }

@@ -1,31 +1,67 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import netlifyIdentity from 'netlify-identity-widget'
+import { useState } from 'react'
+import { Button } from '../Button/Button'
 
 const Navbar = () => {
     const navigate = useNavigate()
+    const location = useLocation()
+    const [redirectToReferrer, setRedirectToReferrer] = useState<boolean>(false)
+
+    const netlifyAuth = {
+        isAuthenticated: false,
+        user: null,
+        authenticate(callback: (user: any) => void) {
+            this.isAuthenticated = true
+            netlifyIdentity.open()
+            netlifyIdentity.on('login', (user) => {
+                localStorage.setItem('user', JSON.stringify(user))
+                callback(user)
+            })
+        },
+        signout(callback: () => void) {
+            this.isAuthenticated = false
+            netlifyIdentity.logout()
+            netlifyIdentity.on('logout', () => {
+                this.user = null
+                callback()
+            })
+        },
+    }
+
+    const login = () => {
+        netlifyAuth.authenticate(() => {
+            setRedirectToReferrer(true)
+        })
+    }
+
+    const { from } = location.state || { from: { pathname: '/' } }
+
+    if (redirectToReferrer) return <Navigate to={from} replace={true} />
 
     return (
-        <div className="mt-[200px] md:mt-20 text-secondary">
-            <nav className="fixed top-0 md:h-[80px] w-full flex justify-between flex-wrap bg-primary p-6 z-50">
-                <div
-                    className="flex mr-8 cursor-pointer"
-                    onClick={() => navigate('/')}
-                >
-                    <img className="fill-current h-12 w-8 mr-4 mt-[-9px]" />
-                    <span className="font-middle-saxony tracking-widest font-semibold text-xl">
-                        Balatro mods library
-                    </span>
-                </div>
-                <div className="w-full flex-grow md:flex md:items-center md:text-left text-center md:w-auto mt-5 md:mt-0">
-                    <div className="text-sm md:flex h-full">
-                        <div className={`mt-4 md:mt-1 mr-4`}>
-                            <Link className={`nav-link inline-block`} to="/">
-                                Link
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
+        <nav className="flex justify-end m-4">
+            {netlifyAuth.isAuthenticated ? (
+                <p>
+                    Welcome !{' '}
+                    <Button
+                        onClick={() => {
+                            netlifyAuth.signout(() => navigate('/'))
+                        }}
+                        size="small"
+                        background="red"
+                        label="Sign out"
+                    />
+                </p>
+            ) : (
+                <Button
+                    onClick={login}
+                    size="small"
+                    background="green"
+                    label="Log in"
+                />
+            )}
+        </nav>
     )
 }
 

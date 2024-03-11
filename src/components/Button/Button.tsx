@@ -1,4 +1,3 @@
-import React from 'react'
 import './button.scss'
 
 interface ButtonProps {
@@ -35,7 +34,7 @@ export const Button = ({
     ...props
 }: ButtonProps) => {
     const sizing: { [size: string]: string } = {
-        small: 'text-sm px-4 py-2',
+        small: 'text-sm px-5 py-3',
         medium: 'text-md px-6 py-4',
         large: 'text-lg px-7 py-5',
     }

@@ -1,8 +1,7 @@
-import { routerType } from '@/types/router.types'
+import { routerInterface } from '@/types/router.types'
 import Home from '@/pages/Home'
 
-
-const routes: routerType[] = [
+const routes: routerInterface[] = [
     {
         path: '',
         element: <Home />,

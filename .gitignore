@@ -249,3 +249,5 @@ $RECYCLE.BIN/
 ArchitecturalStudy
 
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode,windows,macos,linux,test
+# Local Netlify folder
+.netlify

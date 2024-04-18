@@ -17,10 +17,9 @@ const generateHeaders = () => {
 
 export default {
     createMod: async (mod: modInterface): Promise<Response> => {
-        return fetch('http://localhost:9999/.netlify/functions/mod', {
-            method: 'POST',
+        return fetch('/.netlify/functions/mod', {
+            method: 'GET',
             headers: generateHeaders(),
-            body: JSON.stringify(mod),
         })
     },
 }

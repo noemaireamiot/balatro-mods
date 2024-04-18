@@ -1,15 +1,9 @@
 import { Button } from '@/components/Button/Button'
 import ApiService from '@/sevices/ApiService'
-import { modInterface } from '@/types/mod.types'
 
 const Home = () => {
-    const mod: modInterface = {
-        name: 'test',
-        description: 'desc',
-    }
-
     const handleCreate = async () => {
-        const response = await ApiService.createMod(mod)
+        const response = await ApiService.createMod()
         console.log(response)
     }
 

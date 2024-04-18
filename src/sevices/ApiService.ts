@@ -1,4 +1,3 @@
-import { modInterface } from '@/types/mod.types'
 import netlifyIdentity from 'netlify-identity-widget'
 
 const generateHeaders = () => {
@@ -16,7 +15,7 @@ const generateHeaders = () => {
 }
 
 export default {
-    createMod: async (mod: modInterface): Promise<Response> => {
+    createMod: async (): Promise<Response> => {
         return fetch('/.netlify/functions/mod', {
             method: 'GET',
             headers: generateHeaders(),

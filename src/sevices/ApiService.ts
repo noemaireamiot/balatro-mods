@@ -16,9 +16,12 @@ const generateHeaders = () => {
 
 export default {
     createMod: async (): Promise<Response> => {
-        return fetch('/.netlify/functions/mod', {
-            method: 'GET',
-            headers: generateHeaders(),
-        })
+        return fetch(
+            'https://balatro-mods.netlify.app/.netlify/functions/mod',
+            {
+                method: 'GET',
+                headers: generateHeaders(),
+            }
+        )
     },
 }

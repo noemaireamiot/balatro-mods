@@ -4,7 +4,8 @@ import ApiService from '@/sevices/ApiService'
 const Home = () => {
     const handleCreate = async () => {
         const response = await ApiService.createMod()
-        console.log(response)
+        const mods = await response.json()
+        console.log(mods)
     }
 
     return (

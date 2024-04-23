@@ -20,7 +20,7 @@ const generateHeaders = () => {
 
 export default {
     createMod: async (mod: modInformationsInterface): Promise<Response> => {
-        return fetch('http://localhost:9999/.netlify/functions/mod', {
+        return fetch('/.netlify/functions/mod', {
             method: 'POST',
             headers: generateHeaders(),
             body: JSON.stringify(mod),
@@ -30,14 +30,14 @@ export default {
         mod: modInformationsInterface,
         mod_id: string
     ): Promise<Response> => {
-        return fetch('http://localhost:9999/.netlify/functions/mod', {
+        return fetch('/.netlify/functions/mod', {
             method: 'PUT',
             headers: generateHeaders(),
             body: JSON.stringify({ ...mod, mod_id }),
         })
     },
     deleteMod: async (mod_id: string): Promise<Response> => {
-        return fetch('http://localhost:9999/.netlify/functions/mod', {
+        return fetch('/.netlify/functions/mod', {
             method: 'DELETE',
             headers: generateHeaders(),
             body: JSON.stringify({ mod_id }),
@@ -47,7 +47,7 @@ export default {
         searchQuery: searchQueryInterface
     ): Promise<Response> => {
         return fetch(
-            `http://localhost:9999/.netlify/functions/mod?q=${searchQuery.q}${
+            `/.netlify/functions/mod?q=${searchQuery.q}${
                 searchQuery.exclusiveStartKey
                     ? `exclusiveStartKey=${searchQuery.exclusiveStartKey}`
                     : ''
@@ -59,12 +59,9 @@ export default {
         )
     },
     getMod: async (mod_id: string): Promise<Response> => {
-        return fetch(
-            `http://localhost:9999/.netlify/functions/mod?mod_id=${mod_id}`,
-            {
-                method: 'GET',
-                headers: generateHeaders(),
-            }
-        )
+        return fetch(`/.netlify/functions/mod?mod_id=${mod_id}`, {
+            method: 'GET',
+            headers: generateHeaders(),
+        })
     },
 }

@@ -8,6 +8,11 @@ import {
     UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb'
 
+const awsCredentialIdentity = {
+    accessKeyId: process.env.AWS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_KEY || '',
+}
+
 const update = (
     tableName: string,
     primaryKeyName: string,
@@ -47,6 +52,7 @@ export default {
     creationMod: async (mod: modInterface): Promise<any> => {
         const client = new DynamoDBClient({
             region: 'eu-west-3',
+            credentials: awsCredentialIdentity,
         })
 
         const input = update('mods', 'mod_id', uuidv4(), mod)
@@ -58,6 +64,7 @@ export default {
     updateMod: async (mod: modInterface, mod_id: string): Promise<any> => {
         const client = new DynamoDBClient({
             region: 'eu-west-3',
+            credentials: awsCredentialIdentity,
         })
 
         const input = update('mods', 'mod_id', mod_id, mod)
@@ -69,6 +76,7 @@ export default {
     deleteMod: async (mod_id: string): Promise<any> => {
         const client = new DynamoDBClient({
             region: 'eu-west-3',
+            credentials: awsCredentialIdentity,
         })
 
         const input = {
@@ -87,6 +95,7 @@ export default {
     searchMods: async (searchQuery: searchQueryInterface): Promise<any> => {
         const client = new DynamoDBClient({
             region: 'eu-west-3',
+            credentials: awsCredentialIdentity,
         })
 
         let exclusiveStartKey = {}
@@ -117,6 +126,7 @@ export default {
     getMod: async (mod_id: string): Promise<any> => {
         const client = new DynamoDBClient({
             region: 'eu-west-3',
+            credentials: awsCredentialIdentity,
         })
 
         const input = {

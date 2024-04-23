@@ -1,17 +1,9 @@
 import {
-    DynamoDBClient,
-    ListTablesCommand,
-    ScanCommand,
-    UpdateItemCommand,
-} from '@aws-sdk/client-dynamodb'
-import {
     Config,
-    Context,
     Handler,
     HandlerContext,
     HandlerEvent,
 } from '@netlify/functions'
-import { v4 as uuidv4 } from 'uuid'
 import ModService from '@/sevices/ModService'
 import { UrlUtils } from '@/utils/UrlUtils'
 

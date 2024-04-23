@@ -9,8 +9,8 @@ import {
 } from '@aws-sdk/client-dynamodb'
 
 const awsCredentialIdentity = {
-    accessKeyId: process.env.AWS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_KEY || '',
+    accessKeyId: process.env.MY_AWS_KEY_ID || '',
+    secretAccessKey: process.env.MY_AWS_SECRET_KEY || '',
 }
 
 const update = (

@@ -1,3 +1,7 @@
+import {
+    modInformationsInterface,
+    searchQueryInterface,
+} from '@/types/mod.types'
 import netlifyIdentity from 'netlify-identity-widget'
 
 const generateHeaders = () => {
@@ -15,9 +19,48 @@ const generateHeaders = () => {
 }
 
 export default {
-    createMod: async (): Promise<Response> => {
+    createMod: async (mod: modInformationsInterface): Promise<Response> => {
+        return fetch('http://localhost:9999/.netlify/functions/mod', {
+            method: 'POST',
+            headers: generateHeaders(),
+            body: JSON.stringify(mod),
+        })
+    },
+    updateMod: async (
+        mod: modInformationsInterface,
+        mod_id: string
+    ): Promise<Response> => {
+        return fetch('http://localhost:9999/.netlify/functions/mod', {
+            method: 'PUT',
+            headers: generateHeaders(),
+            body: JSON.stringify({ ...mod, mod_id }),
+        })
+    },
+    deleteMod: async (mod_id: string): Promise<Response> => {
+        return fetch('http://localhost:9999/.netlify/functions/mod', {
+            method: 'DELETE',
+            headers: generateHeaders(),
+            body: JSON.stringify({ mod_id }),
+        })
+    },
+    searchMods: async (
+        searchQuery: searchQueryInterface
+    ): Promise<Response> => {
         return fetch(
-            'https://balatro-mods.netlify.app/.netlify/functions/mod',
+            `http://localhost:9999/.netlify/functions/mod?q=${searchQuery.q}${
+                searchQuery.exclusiveStartKey
+                    ? `exclusiveStartKey=${searchQuery.exclusiveStartKey}`
+                    : ''
+            }`,
+            {
+                method: 'GET',
+                headers: generateHeaders(),
+            }
+        )
+    },
+    getMod: async (mod_id: string): Promise<Response> => {
+        return fetch(
+            `http://localhost:9999/.netlify/functions/mod?mod_id=${mod_id}`,
             {
                 method: 'GET',
                 headers: generateHeaders(),

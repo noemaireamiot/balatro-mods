@@ -1,75 +1,149 @@
-import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb'
-import { Config, Context } from '@netlify/functions'
+import {
+    DynamoDBClient,
+    ListTablesCommand,
+    ScanCommand,
+    UpdateItemCommand,
+} from '@aws-sdk/client-dynamodb'
+import {
+    Config,
+    Context,
+    Handler,
+    HandlerContext,
+    HandlerEvent,
+} from '@netlify/functions'
+import { v4 as uuidv4 } from 'uuid'
+import ModService from '@/sevices/ModService'
+import { UrlUtils } from '@/utils/UrlUtils'
 
-export default async (req: Request, context: Context) => {
-    const res = new Response()
+export async function handler(
+    event: HandlerEvent,
+    context: HandlerContext
+): Handler {
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            // A supprimer
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': '*',
+            },
+            statusCode: 200,
+        }
+    }
 
-    // To delete
-    res.headers.set('Access-Control-Allow-Origin', '*')
-    res.headers.append('Access-Control-Allow-Headers', '*')
-    res.headers.append('Access-Control-Allow-Methods', '*')
-
-    // TOTO vérifier que l'utilisateur est connecté
-
+    if (!context.clientContext.user) {
+        return {
+            body: '[ERROR] Unauthorized',
+            statusCode: 401,
+        }
+    }
     const methodFunction = {
         POST: createMod,
         PUT: updateMod,
         DELETE: deleteMod,
+        GET: searchMod,
     }
 
-    // TODO Get user info
-    console.log(context)
-
-    if (!(req.method in methodFunction)) {
-        // To delete
-        return res
-
-        // return (
-        //     'Invalid HTTP method',
-        //     {
-        //         status: 400,
-        //     }
-        // )
+    if (!(event.httpMethod in methodFunction)) {
+        return {
+            body: '[ERROR] Invalid HTTP Method',
+            statusCode: 400,
+        }
     }
-
-    const client = new DynamoDBClient({
-        region: 'eu-west-3',
-    })
-    const command = new ListTablesCommand({})
-    const results = await client.send(command)
-    // console.log(results)
-    // console.log(command)
 
     try {
-        const body = await req.json()
+        let body = null
 
-        console.log(body)
+        if (event.httpMethod !== 'GET') {
+            body = {
+                ...JSON.parse(event.body),
+                email: context.clientContext.user.email,
+                username: context.clientContext.user.user_metadata.full_name,
+            }
+        } else {
+            const urlParams = new URL(event.rawUrl)
+            const params = UrlUtils.paramsToObject(
+                urlParams.searchParams.entries()
+            )
+            body = params
+        }
 
-        return methodFunction[req.method](body)
+        return methodFunction[event.httpMethod](body)
     } catch (e) {
-        return new Response(`[ERROR] Invalid JSON - ${e.message}`, {
-            status: 400,
-        })
+        return {
+            body: `[ERROR] Invalid JSON - ${e.message}`,
+            statusCode: 400,
+        }
     }
 }
 
 export const config: Config = {}
 
 const createMod = async (body) => {
-    const res = new Response()
+    await ModService.creationMod(body)
 
-    // To delete
-    res.headers.set('Access-Control-Allow-Origin', '*')
-    res.headers.append('Access-Control-Allow-Headers', '*')
-    res.headers.append('Access-Control-Allow-Methods', '*')
-    return res
+    return {
+        body: JSON.stringify({ message: 'Mod created successfully' }),
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': '*',
+        },
+        statusCode: 201,
+    }
 }
 
-const updateMod = (body) => {
-    console.log('update')
-    return new Response('Mod updated')
+const updateMod = async (body) => {
+    const mod_id = body.mod_id
+    delete body.mod_id
+
+    await ModService.updateMod(body, mod_id)
+
+    return {
+        body: JSON.stringify({ message: 'Mod updated successfully' }),
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': '*',
+        },
+        statusCode: 200,
+    }
 }
-const deleteMod = (body) => {
-    console.log('delete')
-    return new Response('Mod deleted')
+
+const deleteMod = async (body) => {
+    return {
+        body: JSON.stringify({ message: 'Mod deleted successfully' }),
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': '*',
+        },
+        statusCode: 200,
+    }
+}
+
+const searchMod = async (searchQuery: searchQueryInterface) => {
+    let results
+    if (searchQuery.mod_id) {
+        results = await ModService.getMod(searchQuery.mod_id)
+    } else {
+        results = await ModService.searchMods(searchQuery)
+    }
+
+    if (!results) {
+        return {
+            body: '[ERROR] Invalid Query',
+            statusCode: 400,
+        }
+    }
+
+    return {
+        body: JSON.stringify(results),
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': '*',
+        },
+        statusCode: 200,
+    }
 }
